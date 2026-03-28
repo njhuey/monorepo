@@ -11,12 +11,12 @@ backend_packages = [
 
 [source]
 root_patterns = [
-  "src/*",
-  "tests/*",
+  "monorepo",
+  "tests",
 ]
 
 [python]
-interpreter_constraints = ["CPython>=3.14,<4"]
+interpreter_constraints = ["CPython>=3.13,<4"]
 enable_resolves = true
 default_resolve = "default"
 
