@@ -1,0 +1,25 @@
+[GLOBAL]
+pants_version = "2.31.0"
+
+backend_packages = [
+  "pants.backend.build_files.fmt.ruff",
+  "pants.backend.python",
+  "pants.backend.experimental.python.lint.ruff.check",
+  "pants.backend.experimental.python.lint.ruff.format",
+  "pants.backend.python.typecheck.mypy",
+]
+
+[source]
+root_patterns = [
+  "src/*",
+  "tests/*",
+]
+
+[python]
+interpreter_constraints = ["CPython>=3.14,<4"]
+enable_resolves = true
+default_resolve = "default"
+
+[python.resolves]
+default = "third_party/python/default.lock"
+
