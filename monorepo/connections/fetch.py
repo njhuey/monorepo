@@ -5,16 +5,13 @@ Fetch the 16 words for today's NYT Connections puzzle.
 import json
 import ssl
 from datetime import date
-from typing import Final
+from typing import Any, Final
 from urllib import error, request
 
-
-_NYT_CONNECTIONS_URL: Final[str] = (
-    "https://www.nytimes.com/svc/connections/v2/{date}.json"
-)
+_NYT_CONNECTIONS_URL: Final[str] = "https://www.nytimes.com/svc/connections/v2/{date}.json"
 
 
-def fetch_connections(puzzle_date: date | None = None) -> dict:
+def fetch_connections(puzzle_date: date | None = None) -> dict[str, Any]:
     """
     Fetch Connections puzzle data from NYT.
 
@@ -25,7 +22,7 @@ def fetch_connections(puzzle_date: date | None = None) -> dict:
 
     Returns
     -------
-    dict
+    dict[str, Any]
         Parsed JSON response from NYT API.
     """
     if puzzle_date is None:
@@ -36,12 +33,14 @@ def fetch_connections(puzzle_date: date | None = None) -> dict:
     ctx = ssl.create_default_context()
     try:
         with request.urlopen(req, context=ctx) as response:
-            return json.loads(response.read().decode())
+            result: dict[str, Any] = json.loads(response.read().decode())
+            return result
     except error.URLError:
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
         with request.urlopen(req, context=ctx) as response:
-            return json.loads(response.read().decode())
+            result = json.loads(response.read().decode())
+            return result
 
 
 def get_words(puzzle_date: date | None = None) -> list[str]:

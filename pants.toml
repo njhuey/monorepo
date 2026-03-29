@@ -20,3 +20,6 @@ default_resolve = "default"
 [python.resolves]
 default = "third_party/python/default.lock"
 
+[mypy]
+config = "mypy.ini"
+

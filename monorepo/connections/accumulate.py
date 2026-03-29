@@ -6,7 +6,7 @@ and persist them to a SQLite database.
 import logging
 import time
 from datetime import date, timedelta
-from typing import Final
+from typing import Any, Final
 from urllib.error import HTTPError
 
 import typer
@@ -15,30 +15,27 @@ from sqlmodel import Session, SQLModel, col, create_engine, select
 from monorepo.connections.fetch import fetch_connections
 from monorepo.connections.models import Card, Category, Puzzle
 
-
 _FIRST_PUZZLE_DATE: Final[date] = date(2023, 6, 12)
 _BACKOFF_INITIAL_DELAY: Final[float] = 1.0
 _BACKOFF_FACTOR: Final[float] = 2.0
-_BACKOFF_MAX_RETRIES: Final[float] = 6
+_BACKOFF_MAX_RETRIES: Final[int] = 6
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def _latest_date_in_db(session: Session) -> date | None:
-    result = session.exec(
-        select(Puzzle).order_by(col(Puzzle.puzzle_date).desc())
-    ).first()
+    result = session.exec(select(Puzzle).order_by(col(Puzzle.puzzle_date).desc())).first()
     return result.puzzle_date if result else None
 
 
-def _validate_puzzle_data(data: dict, puzzle_date: date) -> bool:
+def _validate_puzzle_data(data: dict[str, Any], puzzle_date: date) -> bool:
     """
     Validate that puzzle data has the expected structure.
 
     Parameters
     ----------
-    data : dict
+    data : dict[str, Any]
         Parsed JSON response from NYT API.
     puzzle_date : date
         Date of the puzzle, used in warning messages.
@@ -68,14 +65,12 @@ def _validate_puzzle_data(data: dict, puzzle_date: date) -> bool:
             return False
         for card in cards:
             if "content" not in card:
-                logger.warning(
-                    "Puzzle %s: card missing 'content' field: %s", puzzle_date, card
-                )
+                logger.warning("Puzzle %s: card missing 'content' field: %s", puzzle_date, card)
                 return False
     return True
 
 
-def _fetch_with_backoff(puzzle_date: date) -> dict | None:
+def _fetch_with_backoff(puzzle_date: date) -> dict[str, Any] | None:
     """
     Fetch puzzle data, retrying with exponential backoff on rate limit errors.
 
@@ -86,7 +81,7 @@ def _fetch_with_backoff(puzzle_date: date) -> dict | None:
 
     Returns
     -------
-    dict | None
+    dict[str, Any] | None
         Parsed puzzle data, or None if the fetch failed after all retries
         or encountered a non-rate-limit error.
     """
@@ -136,16 +131,14 @@ def accumulate(db_path: str, append: bool = False) -> None:
         current = start
         today = date.today()
         while current <= today:
-            if not session.get(Puzzle, current):  # type: ignore[arg-type]
+            if not session.get(Puzzle, current):
                 raw = _fetch_with_backoff(current)
                 if raw is None:
                     logger.error("Skipping %s due to fetch failure", current)
                     current += timedelta(days=1)
                     continue
                 if not _validate_puzzle_data(raw, current):
-                    logger.error(
-                        "Skipping %s due to unexpected response structure", current
-                    )
+                    logger.error("Skipping %s due to unexpected response structure", current)
                     current += timedelta(days=1)
                     continue
                 session.add(Puzzle(puzzle_date=current))
@@ -156,7 +149,7 @@ def accumulate(db_path: str, append: bool = False) -> None:
                     for card in cat["cards"]:
                         session.add(
                             Card(
-                                category_id=category.id,  # type: ignore[arg-type]
+                                category_id=category.id,
                                 content=card["content"].lower(),
                             )
                         )

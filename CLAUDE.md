@@ -11,6 +11,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Python style
 
 - Docstrings: NumPy format, first line on a new line after `"""`
+- Line length: 100 characters (enforced by ruff)
+- Type annotations are required on all functions (enforced by ruff ANN rules)
+- mypy runs in strict mode — all code must be fully typed
 
 ## Build system
 
