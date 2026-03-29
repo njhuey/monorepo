@@ -9,7 +9,9 @@ from typing import Final
 from urllib import error, request
 
 
-_NYT_CONNECTIONS_URL: Final = "https://www.nytimes.com/svc/connections/v2/{date}.json"
+_NYT_CONNECTIONS_URL: Final[str] = (
+    "https://www.nytimes.com/svc/connections/v2/{date}.json"
+)
 
 
 def fetch_connections(puzzle_date: date | None = None) -> dict:
