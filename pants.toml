@@ -10,10 +10,7 @@ backend_packages = [
 ]
 
 [source]
-root_patterns = [
-  "monorepo",
-  "tests",
-]
+root_patterns = ["/"]
 
 [python]
 interpreter_constraints = ["CPython>=3.13,<4"]
