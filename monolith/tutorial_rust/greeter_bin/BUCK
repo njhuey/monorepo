@@ -1,0 +1,8 @@
+rust_binary(
+    name = "main",
+    srcs = ["src/main.rs"],
+    deps = [
+        "root//monolith/tutorial_rust/greeter_lib:library",
+        "root//monolith/tutorial_rust/logging_lib:logging_lib",
+    ],
+)

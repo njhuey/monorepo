@@ -1,0 +1,4 @@
+python_binary(
+    name = "test_file",
+    main = "main.py",
+)
