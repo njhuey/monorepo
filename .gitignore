@@ -21,3 +21,6 @@ __pycache__/
 
 # Data
 data/
+
+# Buck2
+buck-out/
